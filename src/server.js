@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 
 // GET-запит - Список усіх нотаток
 app.get('/notes', (req, res) => {
-  res.status(200).json([{ message: 'Retrieved all notes' }]);
+  res.status(200).json({ message: 'Retrieved all notes' });
 });
 
 // GET-запит - Конктретна нотатка за id
