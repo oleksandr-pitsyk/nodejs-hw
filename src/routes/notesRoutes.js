@@ -14,11 +14,11 @@ import {
 const router = Router();
 
 // GET-запит до кореневого маршруту "/"
-router.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'Hello world!',
-  });
-});
+// router.get('/', (req, res) => {
+//   res.status(200).json({
+//     message: 'Hello world!',
+//   });
+// });
 
 // GET /notes - Список усіх нотаток
 router.get('/notes', getAllNotes);

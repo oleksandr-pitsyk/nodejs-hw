@@ -12,6 +12,7 @@ const noteSchema = new Schema(
     content: {
       type: String,
       trim: true, // прибирає пробіли на початку та в кінці рядка
+      default: '', // значення за замовчуванням, якщо поле не передано
     },
     tag: {
       type: String,
