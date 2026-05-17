@@ -10,9 +10,78 @@ import createHttpError from 'http-errors';
 import { Note } from '../models/note.js';
 
 // GET /notes - Список усіх нотаток
+// Приклад GET запиту буде виглядати наступним чином:
+// http://localhost:3030/notes?page=1&perPage=15&tag=Todo&search=hello
+// Можливість пагінації до маршруту GET /notes через параметри рядка запиту:
+//    page - номер сторінки запиту (за замовчуванням 1)
+//    perPage - кількість елементів на сторінці (за замовчуванням 10)
 export const getAllNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  // Деструктуризація параметрів рядка запиту
+  const { page = 1, perPage = 10, tag, search } = req.query;
+  // Розрахунок кількості запитів, які треба пропустити
+  const skip = (page - 1) * perPage;
+
+  // Створення основного запиту в БД
+  const notesQuery = Note.find();
+
+  // Будуємо фільтрацію запиту
+  // Якщо є параметр запиту по тегу
+  if (tag) {
+    notesQuery.where('tag').equals(tag);
+  }
+
+  // Якщо є параметр запиту по пошуку ЦІЛОГО слова (пошук в title або content)
+  // Для цього в схемі зроблений текстовий індех в полях title та content
+  // Note.find({ $text: { $search: 'javascript' } });
+  if (search) {
+    notesQuery.where({
+      $text: { $search: search },
+    });
+  }
+
+  // Якщо є параметр запиту по пошуку слова або частини слова (пошук тільки в title)
+  // if (search) {
+  //   notesQuery.where({
+  //     title: { $regex: search, $options: 'i' },
+  //   });
+  // }
+
+  // Якщо є параметр запиту по пошуку слова або частини слова (пошук в title або content)
+  // Буде шукати і в title, і в content --- $or []:
+  // if (search) {
+  //   notesQuery.where({
+  //     $or: [
+  //       { title: { $regex: search, $options: 'i' } },
+  //       { content: { $regex: search, $options: 'i' } },
+  //     ],
+  //   });
+  // }
+
+  // Запуск запитів в БД на пошук :
+  //    - Загальна кількість нотаток (склонованим запитом) методом countDocuments()
+  //    - Список нотаток - skip(пропускаємо нотаток).limit(кількість на сторінці)
+  const [totalNotes, notes] = await Promise.all([
+    notesQuery.clone().countDocuments(),
+    notesQuery.skip(skip).limit(perPage),
+  ]);
+
+  // Розрахунок загальної кількості сторінок (округлення вгору)
+  const totalPages = Math.ceil(totalNotes / perPage);
+
+  // У разі вдалої обробки запиту відповідь сервера має бути зі статусом 200
+  // та містити об’єкт із наступними властивостями:
+  //    page - поточна сторінка
+  //    perPage - кількість елементів в одній сторінці
+  //    totalNotes - загальна кількість нотаток в колекції
+  //    totalPages - загальна кількість сторінок
+  //    notes - масив нотаток
+  res.status(200).json({
+    page,
+    perPage,
+    totalNotes,
+    totalPages,
+    notes,
+  });
 };
 
 // GET /notes/:noteId - Конктретна нотатка за id
