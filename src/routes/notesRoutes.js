@@ -1,6 +1,16 @@
 // Express Router — об'єкт, який дозволяє групувати маршрути та їх обробники у логічні блоки.
 import { Router } from 'express';
 
+// Імпорт бібліотеки валідації
+import { celebrate } from 'celebrate';
+// Імпорт схем валідації
+import {
+  getAllNotesSchema,
+  noteIdSchema,
+  createNoteSchema,
+  updateNoteSchema,
+} from '../validations/notesValidation.js';
+
 // Імпорт контролерів
 import {
   getAllNotes,
@@ -21,19 +31,19 @@ const router = Router();
 // });
 
 // GET /notes - Список усіх нотаток
-router.get('/notes', getAllNotes);
+router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 
 // GET /notes/:noteId - Конктретна нотатка за id
-router.get('/notes/:noteId', getNoteById);
+router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
 
 // POST /notes - Створення нової нотатки
-router.post('/notes', createNote);
+router.post('/notes', celebrate(createNoteSchema), createNote);
 
 // PATCH /notes/:noteId - Редагування нотатки
-router.patch('/notes/:noteId', updateNote);
+router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
 
 // DELETE /notes/:noteId - Видалення нотатки
-router.delete('/notes/:noteId', deleteNote);
+router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
 // Експорт роутера
 export default router;
