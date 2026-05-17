@@ -1,6 +1,9 @@
 // Схема та модель для колекції "notes" у MongoDB
 import { Schema, model } from 'mongoose';
 
+// Імпорт константи с тегами
+import { TAGS } from '../constants/tags.js';
+
 // Схема визначає структуру документів у колекції "notes".
 const noteSchema = new Schema(
   {
@@ -16,18 +19,7 @@ const noteSchema = new Schema(
     },
     tag: {
       type: String,
-      enum: [
-        'Work',
-        'Personal',
-        'Meeting',
-        'Shopping',
-        'Ideas',
-        'Travel',
-        'Finance',
-        'Health',
-        'Important',
-        'Todo',
-      ], // перелік допустимих значень
+      enum: TAGS, // перелік допустимих значень
       default: 'Todo', // значення за замовчуванням, якщо поле не передано
     },
   },
