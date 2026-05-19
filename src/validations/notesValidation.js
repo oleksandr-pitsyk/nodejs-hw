@@ -45,6 +45,8 @@ export const getAllNotesSchema = {
     }),
     tag: Joi.string().valid(...TAGS),
     search: Joi.string().trim().allow(''),
+    sortBy: Joi.string().valid('_id', 'tag', 'title'),
+    sortOrder: Joi.string().valid('asc', 'desc'),
   }),
 };
 
