@@ -15,9 +15,24 @@ import { Note } from '../models/note.js';
 // Можливість пагінації до маршруту GET /notes через параметри рядка запиту:
 //    page - номер сторінки запиту (за замовчуванням 1)
 //    perPage - кількість елементів на сторінці (за замовчуванням 10)
+// Фільтрація :
+//    - по полю tag
+//    - по поиску - search в полях title / content
+// Клієнт може передати параметри sortBy (поле для сортування) і sortOrder (порядок).
+// Якщо параметри не передані — застосовується сортування за замовчуванням по _id.
 export const getAllNotes = async (req, res) => {
   // Деструктуризація параметрів рядка запиту
-  const { page = 1, perPage = 10, tag, search } = req.query;
+  const {
+    page = 1,
+    perPage = 10,
+    tag,
+    search,
+    // Отримуємо значення параметрів сортування
+    // дефолтне сортування по _id
+    sortBy = '_id',
+    // дефолтне сортування по зростанню
+    sortOrder = 'asc',
+  } = req.query;
   // Розрахунок кількості запитів, які треба пропустити
   const skip = (page - 1) * perPage;
 
@@ -39,7 +54,8 @@ export const getAllNotes = async (req, res) => {
     });
   }
 
-  // Якщо є параметр запиту по пошуку слова або частини слова (пошук тільки в title)
+  // Якщо є параметр запиту по пошуку слова або частині слова (пошук тільки в title)
+  // Для $regex - індекс НЕ потрібний
   // if (search) {
   //   notesQuery.where({
   //     title: { $regex: search, $options: 'i' },
@@ -57,12 +73,17 @@ export const getAllNotes = async (req, res) => {
   //   });
   // }
 
+  // Сортування
+
   // Запуск запитів в БД на пошук :
   //    - Загальна кількість нотаток (склонованим запитом) методом countDocuments()
   //    - Список нотаток - skip(пропускаємо нотаток).limit(кількість на сторінці)
   const [totalNotes, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
-    notesQuery.skip(skip).limit(perPage),
+    notesQuery
+      .skip(skip)
+      .limit(perPage)
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   // Розрахунок загальної кількості сторінок (округлення вгору)
