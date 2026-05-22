@@ -1,3 +1,5 @@
+// Маршрути
+
 // Express Router — об'єкт, який дозволяє групувати маршрути та їх обробники у логічні блоки.
 import { Router } from 'express';
 
@@ -20,8 +22,17 @@ import {
   updateNote,
 } from '../controllers/notesController.js';
 
+// Імпорт middleware перевірки аутентифікації
+import { authenticate } from '../middleware/authenticate.js';
+
 // Створення роутеру
 const router = Router();
+
+// Додаємо middleware аутентифікації до всіх шляхів, що починаються з /notes
+// Коли ми приміняємо middleware таким чином - router.use(path, middleware),
+// вона будет примінятися до всіх роутів цього роутера.
+// Тобто, вона відпрацює на всіх роутах, що починаються зі /notes.
+router.use('/notes', authenticate);
 
 // GET-запит до кореневого маршруту "/"
 // router.get('/', (req, res) => {
