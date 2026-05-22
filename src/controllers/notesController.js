@@ -52,11 +52,11 @@ export const getAllNotes = async (req, res) => {
   // Якщо є параметр запиту по пошуку ЦІЛОГО слова (пошук в title або content)
   // Для цього в схемі зроблений текстовий індех в полях title та content
   // Note.find({ $text: { $search: 'javascript' } });
-  if (search) {
-    notesQuery.where({
-      $text: { $search: search },
-    });
-  }
+  // if (search) {
+  //   notesQuery.where({
+  //     $text: { $search: search },
+  //   });
+  // }
 
   // Якщо є параметр запиту по пошуку слова або частині слова (пошук тільки в title)
   // Для $regex - індекс НЕ потрібний
@@ -68,14 +68,14 @@ export const getAllNotes = async (req, res) => {
 
   // Якщо є параметр запиту по пошуку слова або частини слова (пошук в title або content)
   // Буде шукати і в title, і в content --- $or []:
-  // if (search) {
-  //   notesQuery.where({
-  //     $or: [
-  //       { title: { $regex: search, $options: 'i' } },
-  //       { content: { $regex: search, $options: 'i' } },
-  //     ],
-  //   });
-  // }
+  if (search) {
+    notesQuery.where({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
 
   // Сортування
 

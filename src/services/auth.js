@@ -27,7 +27,7 @@ export const createSession = async (userId) => {
   const refreshTokenValidUntil = new Date(Date.now() + ONE_DAY);
 
   // Створюємо нову поточну сессію для користувача - створюємо новий запис в БД Session
-  const session = Session.create({
+  const session = await Session.create({
     userId,
     accessToken,
     refreshToken,

@@ -13,24 +13,24 @@ const sessionSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: 'User',
     },
     accessToken: {
       type: String,
-      require: true,
+      required: true,
     },
     refreshToken: {
       type: String,
-      require: true,
+      required: true,
     },
     accessTokenValidUntil: {
       type: Date,
-      require: true,
+      required: true,
     },
     refreshTokenValidUntil: {
       type: Date,
-      require: true,
+      required: true,
     },
   },
   {

@@ -17,12 +17,12 @@ const userSchema = new Schema(
     email: {
       type: String, // тип - рядок
       unique: true, // має бути унікальне значення в БД
-      require: true, // поле обов'язкове для заповнення
+      required: true, // поле обов'язкове для заповнення
       trim: true, // прибирає пробіли на початку та в кінці рядка
     },
     password: {
       type: String, // тип - рядок
-      require: true, // поле обов'язкове для заповнення
+      required: true, // поле обов'язкове для заповнення
     },
   },
   {
