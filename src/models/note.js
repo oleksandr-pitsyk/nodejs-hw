@@ -22,6 +22,13 @@ const noteSchema = new Schema(
       enum: TAGS, // перелік допустимих значень
       default: 'Todo', // значення за замовчуванням, якщо поле не передано
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User', // поле userId посилається на інший документ у колекції users.
+      // Це дозволяє виконувати запити з використанням методу populate
+      // (наприклад, отримати нотатку разом з інформацією про користувача, якому вона належить)
+      required: true,
+    },
   },
   {
     timestamps: true, // автоматично додає createdAt і updatedAt
@@ -30,10 +37,11 @@ const noteSchema = new Schema(
 );
 
 // Индексация в модели
+//    - по id користувача, сортировка по возрастанию
 //    - по тегу, сортировка по возрастанию
-noteSchema.index({ tag: 1 });
 //    - по названию, сортировка по возрастанию
-noteSchema.index({ title: 1 });
+noteSchema.index({ userId: 1, tag: 1, title: 1 });
+
 //    - текстовый индекс - по названию и содержанию
 //    text index може бути тільки один на колекцію, але він може включати кілька полів.
 noteSchema.index({ title: 'text', content: 'text' });
