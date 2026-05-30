@@ -22,15 +22,31 @@ export const upload = multer({
   // інакше - cb(null, true), тобто файл приймається.
   fileFilter: (req, file, cb) => {
     // визначає, які файли дозволено приймати.
+    // ----------------------------------------------------------------------------------------
+    // Варіант 1 - конспект :
     // У цьому випадку - лише ті, чий mimetype співпадає із можливими значеннями.
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    // const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
-    if (allowedTypes.includes(file.mimetype)) {
+    // if (allowedTypes.includes(file.mimetype)) {
+    //   // cb(null, true) - файл дозволено (приймаємо);
+    //   cb(null, true);
+    // } else {
+    //   // cb(new Error('...')) - файл відхилено з помилкою, обробка переривається.
+    //   cb(new Error('Only images allowed'), false);
+    // }
+    // ----------------------------------------------------------------------------------------
+
+    // ----------------------------------------------------------------------------------------
+    // Варіант 2 - лекція та перевірка ДЗ ШІ :
+    // ----------------------------------------------------------------------------------------
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      //  cb(new Error('...')) - файл відхилено з помилкою, обробка переривається.
+      cb(new Error('Only images allowed'), false);
+      // Вихід з функції при помилці
+      return;
+    } else {
       // cb(null, true) - файл дозволено (приймаємо);
       cb(null, true);
-    } else {
-      // cb(new Error('...')) - файл відхилено з помилкою, обробка переривається.
-      cb(new Error('Only images allowed'), false);
     }
   },
 });
