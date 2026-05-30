@@ -221,11 +221,11 @@ export const requestResetEmail = async (req, res) => {
   const { email } = req.body;
   // Шукаємо в БД користувача за email
   const user = await User.findOne({ email });
-  // Якщо користувача нема — навмисно повертаємо ту саму "успішну"
+  // Якщо користувача нема — ВИХОДИМО та навмисно повертаємо ту саму "успішну"
   // відповідь без відправлення листа (захист від хакерів - anti user enumeration).
   // Однакові відповіді із статусом 200 це щоб унеможливити «вичитування» наявності облікового запису.
   if (!user) {
-    res.status(200).json({ message: 'Password reset email sent successfully' });
+    return res.status(200).json({ message: 'Password reset email sent successfully' });
   }
 
   // Якщо Користувач є в БД
