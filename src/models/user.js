@@ -24,6 +24,11 @@ const userSchema = new Schema(
       type: String, // тип - рядок
       required: true, // поле обов'язкове для заповнення
     },
+    avatar: {
+      type: String, // тип - рядок
+      required: false, // поле НЕ обов'язкове для заповнення
+      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg', // значення за замовчуванням
+    },
   },
   {
     timestamps: true, // автоматично додає createdAt і updatedAt
@@ -40,7 +45,7 @@ userSchema.pre('save', async function () {
 });
 
 // Перевизначаємо метод toJSON,
-// щоб при виклику перетворення відповіді res.json() з об'єкту видалався пароль
+// щоб при виклику перетворення відповіді res.json() з об'єкту видалявся пароль
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
